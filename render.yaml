@@ -12,4 +12,8 @@ services:
       - key: PORT
         value: 8000
       - key: DJANGO_SETTINGS_MODULE
-        value: bakery_project.settings 
+        value: bakery_project.settings
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4 
