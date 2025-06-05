@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Supply Receipt{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <h2>UPENDO MIN BAKERY</h2>
+                <h4>SUPPLY RECEIPT BOOK</h4>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Receipt No:</strong> {{ purchase.id }}</p>
+                    <p><strong>Date Received:</strong> {{ purchase.purchase_date|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Supplier Name:</strong> {{ purchase.supplier.name }}</p>
+                    <p><strong>Supplier Contact:</strong> {{ purchase.supplier.phone }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Delivery Person:</strong> {{ purchase.delivery_person|default:"N/A" }}</p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Item Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                            <th>Expiry Date</th>
+                            <th>Checked By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>{{ purchase.product.name }}</td>
+                            <td>{{ purchase.quantity }}</td>
+                            <td>{{ purchase.unit_price }}</td>
+                            <td>{{ purchase.total_amount }}</td>
+                            <td>{{ purchase.expiry_date|default:"N/A" }}</td>
+                            <td>{{ purchase.checked_by|default:"N/A" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <p><strong>Subtotal:</strong> {{ purchase.total_amount }}</p>
+                    <p><strong>Discount:</strong> {{ purchase.discount|default:"0.00" }}</p>
+                    <p><strong>Total Amount:</strong> {{ purchase.total_amount }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Amount Received:</strong> {{ purchase.amount_paid|default:"0.00" }}</p>
+                    <p><strong>Debt:</strong> {{ purchase.debt|default:"0.00" }}</p>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <p><strong>Signature:</strong> _________________</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Remarks:</strong> {{ purchase.notes|default:"N/A" }}</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="bi bi-printer"></i> Print Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .btn, .navbar, footer {
+            display: none !important;
+        }
+        .card {
+            border: none !important;
+        }
+        .card-body {
+            padding: 0 !important;
+        }
+    }
+</style>
+{% endblock %} 

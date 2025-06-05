@@ -1,0 +1,142 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Production Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Production Dashboard</h1>
+
+    <!-- Action Buttons -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <a href="{% url 'add_recipe' %}" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-book"></i> Add New Recipe
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'add_production_batch' %}" class="btn btn-success btn-lg w-100">
+                <i class="fas fa-industry"></i> Start New Batch
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'stock_report' %}" class="btn btn-info btn-lg w-100">
+                <i class="fas fa-boxes"></i> Check Stock
+            </a>
+        </div>
+    </div>
+
+    <!-- Active Production Batches -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Active Production Batches</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Batch Number</th>
+                            <th>Recipe</th>
+                            <th>Planned Date</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for batch in active_batches %}
+                        <tr>
+                            <td>{{ batch.batch_number }}</td>
+                            <td>{{ batch.recipe.name }}</td>
+                            <td>{{ batch.planned_date }}</td>
+                            <td>{{ batch.planned_quantity }}</td>
+                            <td>
+                                <span class="badge {% if batch.status == 'in_progress' %}bg-warning{% else %}bg-info{% endif %}">
+                                    {{ batch.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">Update Status</button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No active production batches</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Completed Batches -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Today's Completed Batches</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Batch Number</th>
+                            <th>Recipe</th>
+                            <th>Planned Quantity</th>
+                            <th>Actual Quantity</th>
+                            <th>Completion Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for batch in completed_batches %}
+                        <tr>
+                            <td>{{ batch.batch_number }}</td>
+                            <td>{{ batch.recipe.name }}</td>
+                            <td>{{ batch.planned_quantity }}</td>
+                            <td>{{ batch.actual_quantity }}</td>
+                            <td>{{ batch.actual_date }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No completed batches today</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Available Recipes</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for recipe in recipes %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ recipe.name }}</h5>
+                            <p class="card-text">{{ recipe.description }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Prep Time: {{ recipe.preparation_time }} minutes<br>
+                                    Yield: {{ recipe.yield_quantity }} items<br>
+                                    Cost per Batch: ${{ recipe.cost_per_batch|floatformat:2 }}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-center">No recipes available</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

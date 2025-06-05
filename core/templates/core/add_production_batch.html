@@ -1,0 +1,128 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Add Production Batch{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Add Production Batch</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.recipe.id_for_label }}" class="form-label">Recipe</label>
+                            {{ form.recipe }}
+                            {% if form.recipe.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.recipe.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.batch_number.id_for_label }}" class="form-label">Batch Number</label>
+                            {{ form.batch_number }}
+                            {% if form.batch_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.batch_number.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.planned_date.id_for_label }}" class="form-label">Planned Date</label>
+                                    {{ form.planned_date }}
+                                    {% if form.planned_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.planned_date.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.status.id_for_label }}" class="form-label">Status</label>
+                                    {{ form.status }}
+                                    {% if form.status.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.status.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.planned_start_time.id_for_label }}" class="form-label">Start Time</label>
+                                    {{ form.planned_start_time }}
+                                    {% if form.planned_start_time.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.planned_start_time.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.planned_end_time.id_for_label }}" class="form-label">End Time</label>
+                                    {{ form.planned_end_time }}
+                                    {% if form.planned_end_time.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.planned_end_time.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.quantity_produced.id_for_label }}" class="form-label">Quantity Produced</label>
+                            {{ form.quantity_produced }}
+                            {% if form.quantity_produced.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.quantity_produced.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.quality_notes.id_for_label }}" class="form-label">Quality Notes</label>
+                            {{ form.quality_notes }}
+                            {% if form.quality_notes.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.quality_notes.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'production_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Add Batch</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-control, .form-select {
+        width: 100%;
+    }
+    .invalid-feedback {
+        display: block;
+    }
+</style>
+{% endblock %} 

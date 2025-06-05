@@ -1,0 +1,148 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Bakery Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Bakery Management</h2>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">New Sale</h5>
+                    <p class="card-text">Record a new customer sale</p>
+                    <a href="{% url 'pos' %}" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-cart-plus"></i> Start Sale
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Buy Stock</h5>
+                    <p class="card-text">Order new supplies</p>
+                    <a href="{% url 'add_purchase' %}" class="btn btn-success btn-lg w-100">
+                        <i class="bi bi-bag-plus"></i> Order Supplies
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Check Stock</h5>
+                    <p class="card-text">View current stock levels</p>
+                    <a href="{% url 'stock_report' %}" class="btn btn-info btn-lg w-100">
+                        <i class="bi bi-box"></i> View Stock
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Daily Report</h5>
+                    <p class="card-text">View today's sales and expenses</p>
+                    <a href="{% url 'financial_dashboard' %}" class="btn btn-warning btn-lg w-100">
+                        <i class="bi bi-graph-up"></i> Daily Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Summary -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Today's Sales</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">${{ today_sales|default:"0.00" }}</h3>
+                    <div class="text-center">
+                        <a href="{% url 'pos' %}" class="btn btn-outline-primary">View Sales</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Low Stock Items</h5>
+                </div>
+                <div class="card-body">
+                    {% if low_stock %}
+                    <ul class="list-group">
+                        {% for product in low_stock %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ product.name }}
+                            <span class="badge bg-danger">{{ product.stock_quantity }} left</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-center">All items are well stocked</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Activity</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sale in recent_sales %}
+                                <tr>
+                                    <td>{{ sale.sale_date|date:"h:i A" }}</td>
+                                    <td>Sale</td>
+                                    <td>{{ sale.customer_name }} - ${{ sale.total_amount }}</td>
+                                </tr>
+                                {% endfor %}
+                                {% for purchase in recent_purchases %}
+                                <tr>
+                                    <td>{{ purchase.purchase_date|date:"h:i A" }}</td>
+                                    <td>Purchase</td>
+                                    <td>{{ purchase.product.name }} - {{ purchase.quantity }} units</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn-lg {
+        padding: 1rem;
+    }
+    .bi {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %} 

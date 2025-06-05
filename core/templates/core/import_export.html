@@ -1,0 +1,87 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Import/Export Data{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Import/Export Data</h1>
+
+    <!-- Import Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Import Data</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="import_type" class="form-label">Select Data Type</label>
+                    <select class="form-select" id="import_type" name="import_type" required>
+                        <option value="">Choose...</option>
+                        <option value="product">Products</option>
+                        <option value="supplier">Suppliers</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="import_file" class="form-label">CSV File</label>
+                    <input type="file" class="form-control" id="import_file" name="import_file" accept=".csv" required>
+                    <div class="form-text">Upload a CSV file with the appropriate columns.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Import Data</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Export Section -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Export Data</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">Products</h6>
+                            <p class="card-text">Export all product data including stock levels and pricing.</p>
+                            <a href="{% url 'export_data' %}?type=products" class="btn btn-outline-primary">Export Products</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">Suppliers</h6>
+                            <p class="card-text">Export supplier information and contact details.</p>
+                            <a href="{% url 'export_data' %}?type=suppliers" class="btn btn-outline-primary">Export Suppliers</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">Purchase History</h6>
+                            <p class="card-text">Export purchase records and transaction history.</p>
+                            <a href="{% url 'export_data' %}?type=purchases" class="btn btn-outline-primary">Export Purchases</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Format Help -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">CSV Format Help</h5>
+        </div>
+        <div class="card-body">
+            <h6>Products CSV Format:</h6>
+            <pre>name,description,price,category,stock_quantity,minimum_stock_level,reorder_quantity</pre>
+            
+            <h6>Suppliers CSV Format:</h6>
+            <pre>name,contact_person,phone,email,address</pre>
+        </div>
+    </div>
+</div>
+{% endblock %} 

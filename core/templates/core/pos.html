@@ -1,0 +1,214 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Point of Sale{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row g-3 flex-column flex-md-row">
+        <!-- Product Selection -->
+        <div class="col-12 col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Products</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for product in products %}
+                        <div class="col-12 col-sm-6 col-md-4 mb-3">
+                            <div class="card h-100">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <p class="card-text">
+                                        <span class="currency">KES {{ product.price|floatformat:2 }}</span>
+                                        <br>
+                                        Stock: {{ product.stock_quantity }}
+                                    </p>
+                                    <button class="btn btn-primary btn-sm add-to-cart w-100 mt-2" 
+                                            data-product-id="{{ product.id }}"
+                                            data-product-name="{{ product.name }}"
+                                            data-product-price="{{ product.price }}">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart -->
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Current Sale</h5>
+                </div>
+                <div class="card-body">
+                    <form id="sale-form" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Customer Name</label>
+                            <input type="text" class="form-control" name="customer_name">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Items</label>
+                            <div id="cart-items">
+                                <!-- Cart items will be added here dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <select class="form-select" name="payment_method" required>
+                                <option value="">Select payment method</option>
+                                {% for method in payment_methods %}
+                                <option value="{{ method.id }}">{{ method.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <h4>Total: <span id="total-amount" class="currency">KES 0.00</span></h4>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Complete Sale</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let cart = [];
+    const cartItems = document.getElementById('cart-items');
+    const totalAmount = document.getElementById('total-amount');
+
+    function updateCart() {
+        cartItems.innerHTML = '';
+        let total = 0;
+
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            const itemElement = document.createElement('div');
+            itemElement.className = 'card mb-2';
+            itemElement.innerHTML = `
+                <div class="card-body p-2">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                        <div>
+                            <h6 class="mb-1">${item.name}</h6>
+                            <small class="text-muted">KES ${item.price.toFixed(2)} x ${item.quantity}</small>
+                        </div>
+                        <div class="mt-2 mt-sm-0">
+                            <span class="currency">KES ${itemTotal.toFixed(2)}</span>
+                            <button type="button" class="btn btn-danger btn-sm ms-2 mt-1 mt-sm-0" onclick="removeFromCart(${index})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            cartItems.appendChild(itemElement);
+        });
+
+        totalAmount.textContent = `KES ${total.toFixed(2)}`;
+    }
+
+    function addToCart(productId, name, price) {
+        const existingItem = cart.find(item => item.id === productId);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                id: productId,
+                name: name,
+                price: price,
+                quantity: 1
+            });
+        }
+        updateCart();
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCart();
+    }
+
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', () => {
+            const productId = button.dataset.productId;
+            const name = button.dataset.productName;
+            const price = parseFloat(button.dataset.productPrice);
+            addToCart(productId, name, price);
+        });
+    });
+
+    document.getElementById('sale-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const customerName = this.customer_name.value;
+        const paymentMethod = this.payment_method.value;
+        // Prepare items in the format expected by backend
+        const itemsData = cart.map(item => ({
+            product_id: item.id,
+            quantity: item.quantity
+        }));
+
+        fetch('/pos/process-sale/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                customer_name: customerName,
+                payment_method: paymentMethod,
+                items: itemsData
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Sale completed successfully!');
+                cart = [];
+                updateCart();
+                this.reset();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while processing the sale.');
+        });
+    });
+</script>
+<style>
+    @media (max-width: 767.98px) {
+        .card {
+            margin-bottom: 1rem;
+        }
+        .card .card-body {
+            padding: 1rem;
+        }
+        .btn, .form-control, .form-select {
+            font-size: 1.1rem;
+            min-height: 2.5rem;
+        }
+        .card-title {
+            font-size: 1.1rem;
+        }
+        .currency {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+{% endblock %} 

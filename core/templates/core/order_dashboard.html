@@ -1,0 +1,191 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Order Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Order Dashboard</h2>
+    
+    <!-- Status Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Orders</h5>
+                    <h2 class="card-text">{{ pending_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Ordered</h5>
+                    <h2 class="card-text">{{ ordered_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Delivered</h5>
+                    <h2 class="card-text">{{ delivered_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Manual Pickups</h5>
+                    <h2 class="card-text">{{ manual_pickups_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attention Needed Section -->
+    {% if attention_needed %}
+    <div class="alert alert-warning">
+        <h4>Orders Needing Attention</h4>
+        <p>The following orders have been pending or ordered for more than 3 days:</p>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Supplier</th>
+                        <th>Product</th>
+                        <th>Status</th>
+                        <th>Delivery Method</th>
+                        <th>Expected Delivery</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in attention_needed %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.supplier.name }}</td>
+                        <td>{{ order.product.name }}</td>
+                        <td>{{ order.get_status_display }}</td>
+                        <td>{{ order.get_delivery_method_display }}</td>
+                        <td>{{ order.expected_delivery_date|default:"Not set"|date:"M d, Y" }}</td>
+                        <td>{{ order.purchase_date|date:"M d, Y" }}</td>
+                        <td>
+                            <form method="post" action="{% url 'update_purchase_status' order.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="ordered">
+                                <button type="submit" class="btn btn-sm btn-primary">Mark as Ordered</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Upcoming Deliveries -->
+    <h3>Upcoming Deliveries</h3>
+    <div class="table-responsive mb-4">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Supplier</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Delivery Method</th>
+                    <th>Expected Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in upcoming_deliveries %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.supplier.name }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.get_delivery_method_display }}</td>
+                    <td>{{ order.expected_delivery_date|date:"M d, Y" }}</td>
+                    <td>
+                        <span class="badge {% if order.status == 'pending' %}bg-warning{% elif order.status == 'ordered' %}bg-info{% elif order.status == 'delivered' %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            {% if order.status == 'ordered' %}
+                            <form method="post" action="{% url 'update_purchase_status' order.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="delivered">
+                                <button type="submit" class="btn btn-sm btn-success">Mark as Delivered</button>
+                            </form>
+                            {% endif %}
+                            <a href="{% url 'supply_receipt' order.id %}" class="btn btn-sm btn-info">View Receipt</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Recent Orders -->
+    <h3>Recent Orders</h3>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Supplier</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Delivery Method</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.supplier.name }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.get_delivery_method_display }}</td>
+                    <td>
+                        <span class="badge {% if order.status == 'pending' %}bg-warning{% elif order.status == 'ordered' %}bg-info{% elif order.status == 'delivered' %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ order.purchase_date|date:"M d, Y" }}</td>
+                    <td>
+                        <div class="btn-group">
+                            {% if order.status == 'pending' %}
+                            <form method="post" action="{% url 'update_purchase_status' order.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="ordered">
+                                <button type="submit" class="btn btn-sm btn-primary">Mark as Ordered</button>
+                            </form>
+                            {% elif order.status == 'ordered' %}
+                            <form method="post" action="{% url 'update_purchase_status' order.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="delivered">
+                                <button type="submit" class="btn btn-sm btn-success">Mark as Delivered</button>
+                            </form>
+                            {% endif %}
+                            <a href="{% url 'supply_receipt' order.id %}" class="btn btn-sm btn-info">View Receipt</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

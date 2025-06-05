@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}Upedoo Mini Bakery{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            padding: 0.5rem 1rem;
+        }
+        .navbar-brand {
+            font-size: 1.2rem;
+        }
+        .nav-link {
+            font-size: 1rem;
+            padding: 0.5rem 0.75rem;
+        }
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        .product-card {
+            transition: transform 0.3s;
+            margin-bottom: 15px;
+            cursor: pointer;
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .cart-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .table-responsive {
+            margin-bottom: 1rem;
+        }
+        .form-control {
+            font-size: 16px;
+        }
+        footer {
+            margin-top: auto;
+            padding: 1rem 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background: #343a40;
+                padding: 1rem;
+                border-radius: 0.25rem;
+                margin-top: 0.5rem;
+            }
+            .nav-link {
+                padding: 0.5rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            .nav-link:last-child {
+                border-bottom: none;
+            }
+        }
+        @media (orientation: landscape) and (max-height: 500px) {
+            .navbar {
+                padding: 0.25rem 1rem;
+            }
+            .container {
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+            footer {
+                padding: 0.5rem 0;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">🍞 Upedoo Mini Bakery</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products/"><i class="fas fa-bread-slice"></i> Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pos/"><i class="fas fa-shopping-cart"></i> Order</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow-1">
+        <div class="container py-3">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white">
+        <div class="container text-center">
+            <p class="mb-1">© 2024 Upedoo Mini Bakery</p>
+            <p class="mb-0">Contact: (123) 456-7890</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

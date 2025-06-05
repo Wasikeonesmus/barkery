@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Delete Supplier{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Delete Supplier</h3>
+                </div>
+                <div class="card-body">
+                    {% if has_products or has_purchases %}
+                        <div class="alert alert-danger">
+                            <h4 class="alert-heading">Cannot Delete Supplier</h4>
+                            <p>This supplier cannot be deleted because:</p>
+                            <ul>
+                                {% if has_products %}
+                                    <li>There are products associated with this supplier</li>
+                                {% endif %}
+                                {% if has_purchases %}
+                                    <li>There are purchase records associated with this supplier</li>
+                                {% endif %}
+                            </ul>
+                            <p>Please remove or reassign these items before deleting the supplier.</p>
+                        </div>
+                    {% else %}
+                        <p>Are you sure you want to delete the supplier "{{ supplier.name }}"?</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger">Delete Supplier</button>
+                                <a href="{% url 'supplier_list' %}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
