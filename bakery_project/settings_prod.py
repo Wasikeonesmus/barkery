@@ -5,10 +5,10 @@ import os
 DEBUG = False
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'your-secret-key-here')
 
-# Update allowed hosts
-ALLOWED_HOSTS = ['yourusername.pythonanywhere.com']
+# Update allowed hosts with your PythonAnywhere domain
+ALLOWED_HOSTS = ['wasikeonesmus.pythonanywhere.com']
 
 # Database
 DATABASES = {
