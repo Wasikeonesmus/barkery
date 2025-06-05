@@ -2,10 +2,14 @@ services:
   - type: web
     name: barkery
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:application --bind 0.0.0.0:$PORT
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn bakery_project.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: PORT
-        value: 8000 
+        value: 8000
+      - key: DJANGO_SETTINGS_MODULE
+        value: bakery_project.settings 
