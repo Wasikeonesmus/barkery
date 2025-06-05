@@ -1,24 +1,21 @@
 # Bakery Management System
 
-A comprehensive bakery management system built with Django that helps manage inventory, sales, suppliers, and production.
+A comprehensive bakery management system built with Django that helps manage sales, inventory, suppliers, and financial reporting.
 
 ## Features
 
 - Point of Sale (POS) system
 - Inventory management
 - Supplier management
-- Production tracking
+- Production batch tracking
 - Financial reporting
-- Recipe management
-- Stock alerts
-- Sales tracking
-- Expense tracking
+- User authentication and authorization
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/bakery_management.git
+git clone https://github.com/Wasikeonesmus/barkery.git
 cd bakery_management
 ```
 
@@ -36,12 +33,8 @@ pip install -r requirements.txt
 4. Set up environment variables:
 Create a `.env` file with the following variables:
 ```
-DJANGO_SECRET_KEY=your-secret-key
-DB_NAME=bakery_db
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_HOST=localhost
-DB_PORT=5432
+DJANGO_SECRET_KEY=your_secret_key
+DEBUG=True
 ```
 
 5. Run migrations:
@@ -61,12 +54,9 @@ python manage.py runserver
 
 ## Usage
 
-- Access the admin interface at `/admin/`
-- Use the dashboard at `/dashboard/`
-- Manage products at `/products/`
-- Handle sales at `/pos/`
-- Track inventory at `/stock-report/`
-- Manage suppliers at `/suppliers/`
+1. Access the admin interface at `http://localhost:8000/admin`
+2. Access the dashboard at `http://localhost:8000/dashboard`
+3. Use the POS system at `http://localhost:8000/pos`
 
 ## Contributing
 
@@ -77,4 +67,4 @@ python manage.py runserver
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License.
